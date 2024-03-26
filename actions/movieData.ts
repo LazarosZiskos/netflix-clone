@@ -7,3 +7,16 @@ export const fetchTrending = async () => {
 
   return trending;
 };
+
+export const fetchGenresMovie = async () => {
+  const data = await getApiResponse("/genre/movie/list");
+  const genres = data.genres;
+
+  for (const genre of genres) {
+    const data = await getApiResponse(
+      `/discover/movie?with_genres=${genre.id}`
+    );
+    genre.movies = data.results;
+  }
+  return genres;
+};
