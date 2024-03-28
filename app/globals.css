@@ -45,7 +45,7 @@
 }
 
 .button {
-  @apply w-full px-5 py-3 mt-5 mb-7 rounded-xl cursor-pointer bg-pink-2 hover:bg-pink-1 text-white text-body-bold;
+  @apply w-full px-5 py-3 mt-5 mb-7 rounded-xl cursor-pointer bg-pink-1 hover:bg-black text-white text-body-bold;
 }
 
 .link {
