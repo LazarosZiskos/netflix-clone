@@ -1,23 +1,25 @@
 "use client";
+
 import {
   EmailOutlined,
   LockOutlined,
   PersonOutline,
 } from "@mui/icons-material";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
-import { signIn } from "next-auth/react";
 
 interface FormData {
-  username?: string; //make it optional
+  username?: string; // Make it optional because we don't need it for login page
   email: string;
   password: string;
 }
 
 const AuthForm = ({ type }: { type: "register" | "login" }) => {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -29,7 +31,7 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
         : { email: "", password: "" },
   });
 
-  const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     let res;
 
     if (type === "register") {
@@ -66,13 +68,9 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
     <div className="auth">
       <div className="overlay">
         <div className="content">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
-            alt="logo"
-            className="logo"
-          />
+          <img src="/assets/logo.png" alt="logo" className="logo" />
 
-          <form className="form" onSubmit={handleSubmit(onSubmitHandler)}>
+          <form className="form" onSubmit={handleSubmit(onSubmit)}>
             {type === "register" && (
               <>
                 <div className="input">
@@ -81,8 +79,9 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
                       required: "Username is required",
                       validate: (value: string | undefined) => {
                         if (!value || value.length < 2) {
-                          return "Username must be atleast 2 characters long";
+                          return "Username must be more than 1 character";
                         }
+                        return true;
                       },
                     })}
                     type="text"
@@ -92,7 +91,7 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
                   <PersonOutline sx={{ color: "white" }} />
                 </div>
                 {errors.username && (
-                  <p className="error"> {errors.username.message}</p>
+                  <p className="error">{errors.username.message}</p>
                 )}
               </>
             )}
@@ -108,7 +107,7 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
               />
               <EmailOutlined sx={{ color: "white" }} />
             </div>
-            {errors.email && <p className="error"> {errors.email.message}</p>}
+            {errors.email && <p className="error">{errors.email.message}</p>}
 
             <div className="input">
               <input
@@ -118,11 +117,12 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
                     if (
                       !value ||
                       value.length < 5 ||
-                      value.length > 10 ||
+                      value.length > 20 ||
                       !value.match(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/)
                     ) {
-                      return "Password must be between 5 and 10 characters long and contain at least one special character";
+                      return "Password must be between 5 and 20 character with at least one special";
                     }
+                    return true;
                   },
                 })}
                 type="password"
@@ -132,7 +132,7 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
               <LockOutlined sx={{ color: "white" }} />
             </div>
             {errors.password && (
-              <p className="error"> {errors.password.message}</p>
+              <p className="error">{errors.password.message}</p>
             )}
 
             <button className="button" type="submit">
