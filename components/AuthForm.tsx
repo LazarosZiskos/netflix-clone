@@ -5,7 +5,10 @@ import {
   PersonOutline,
 } from "@mui/icons-material";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 interface FormData {
   username?: string; //make it optional
@@ -14,6 +17,7 @@ interface FormData {
 }
 
 const AuthForm = ({ type }: { type: "register" | "login" }) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -25,8 +29,37 @@ const AuthForm = ({ type }: { type: "register" | "login" }) => {
         : { email: "", password: "" },
   });
 
-  const onSubmitHandler = (data: FormData) => {
-    console.log(data);
+  const onSubmitHandler: SubmitHandler<FormData> = async (data) => {
+    let res;
+
+    if (type === "register") {
+      res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+
+    if (type === "login") {
+      res = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+
+      if (res && res.ok) {
+        router.push("/");
+      } else {
+        toast.error("Invalid credentials");
+      }
+    }
   };
 
   return (

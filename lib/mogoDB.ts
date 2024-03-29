@@ -1,4 +1,3 @@
-import { error } from "console";
 import mongoose from "mongoose";
 
 let isConnected: boolean = false;
@@ -13,12 +12,12 @@ export const connectToDB = async (): Promise<void> => {
 
   try {
     await mongoose.connect(process.env.MONGODB_URL || "", {
-      dbName: "Netflix",
+      dbName: "Cluster0",
     });
 
     isConnected = true;
     console.log("MongoDB is connected successfully");
   } catch (err) {
-    console.error(error);
+    console.error(err);
   }
 };
